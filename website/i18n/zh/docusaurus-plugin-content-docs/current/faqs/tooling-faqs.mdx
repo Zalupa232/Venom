@@ -1,0 +1,13 @@
+# 常见问题解答：开发工具
+
+### 我是否需要下载任何特殊的 npm 库才能在 Arbitrum 上使用 web3.js 或 ethers-js？ {#q-ethers-web3}
+
+不需要; web3.js 和 ethers.js 开箱即用，就像它们在 L1 以太坊上一样。
+
+在之前，Arbitrum 开发人员需要下载名称为“arb-provider-ethers”和“arb-ethers-web3-bridge”的补充包，但这些包已被弃用，不再需要！ 任何指导开发人员使用它们的指南都应被视为过时的。
+
+### 为什么我在使用 hardhat 时会收到“custom tx type”错误？ {#q-hardhat}
+
+在 Arbitrum 中，我们使用许多非标准 [EIP-2718](https://eips.ethereum.org/EIPS/eip-2718) 类型的交易。 请参阅 [此处](/arbos/geth.mdx#transaction-types) 了解完整列表和基本原理。
+
+[Hardhat v2.12.2](https://github.com/NomicFoundation/hardhat/releases/tag/hardhat%402.12.2) 添加了对具有自定义交易类型的 Arbitrum 等分叉网络的支持，因此如果您使用的是 hardhat，请升级 到 2.12.2！

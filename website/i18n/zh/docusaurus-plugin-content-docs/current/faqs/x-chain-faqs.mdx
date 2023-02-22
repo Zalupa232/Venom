@@ -1,0 +1,37 @@
+# 常见问题解答：跨链消息传递
+
+### 如何查看我的跨链消息状态？ {#q-xchain-status}
+
+访问 https://retryable-dashboard.arbitrum.io/ 检查跨链消息的状态（并执行它，如果适用）。 您需要将发起交易的交易哈希（即 L1 到 L2 消息的 L1 交易哈希，以及 L2 到 L1 消息的 L2 交易哈希）输入到查询条中。
+
+### 当我开始从 Arbitrum 取款时，我需要多长时间才能收到我的资金？ {#q-withdrawal-time}
+
+通常_大约_一周。
+
+争议窗口的确切时间存在一些可变性，而且两端还有一些预期的额外“填充”时间（通常不超过大约一个小时）。
+
+争议窗口的可变性来自区块时间的微小差异。 Arbitrum One的争议窗口为45818个区块； 这转换为大约 1 周，假设每个块 13.2 秒，这是以太坊使用工作量证明时的平均块时间（切换到权益证明后，平均块时间约为 12 秒）。
+
+“两端填充”涉及三个事件，这些事件是必须的，它们发生在客户端从 Sequencer 接收到他们的交易收据 和 他们的 L2-to-L1 消息可以被执行期间。 当Sequencer收到该类的收据后，
+
+1. Sequencer 批量发布他们的交易（通常在几分钟内，但如果 L1 拥塞，Sequencer 会等待更长的时间）。 然后，
+2. 验证者将他们的交易包含在一个 RBlock 中（通常在一小时内）。 然后，在长达一周的争议窗口过去后，RBlock 是可确认的，并且
+3. 某人（任何人）确认 L1 上的 RBlock（通常在 ~15 分钟内）。
+
+此外，在极少数且不太可能发生争议的情况下，该延迟期将延长以解决争议。
+
+### 什么是可重试票的“提交费” (submission fee)？ 我该如何计算？ 如果我提供的费用不足怎么办？ {#q-submission-fee}
+
+[可重试票据](/arbos/l1-to-l2-messaging.mdx) 提交费用是用户创建可重试票证必须支付的特殊费用。 费用与可重试票使用的 L1 调用数据的大小成正比。 可以使用`Inbox.calculateRetryableSubmissionFee`方法查询费用。 如果提供的费用不足，交易将在 L1 上回滚，并且不会创建票证。
+
+### 我应该使用收件箱合约中的哪种方法来提交可重试票据？ {#q-retry-methods}
+
+您应该（几乎肯定）使用的方法是“Inbox.createRetryableTicket”。 还有一种替代方法，`Inbox.unsafeCreateRetryableTicket`，顾名思义，只有完全理解其含义的人才能使用它。
+
+`createRetryableTicket` 和 `unsafeCreateRetryableTicket` 有两个区别：
+
+1. `createRetryableTicket` 将检查提供的 callvalue 是否足以支付创建和执行可重试票证（在指定参数下）的成本，否则直接在 L1 恢复。 相比之下，`unsafeCreateRetryableTicket` 将允许创建一个会在l2回滚的票据。
+
+2. `createRetryableTicket` 将检查提供的 `excessFeeRefundAddress` 或 `callValueRefundAddress` 是否是 L1 上的合约； 如果是，为了防止退款在 L2 上无法恢复的情况，它将把它们转换为它们的[地址别名](/arbos/l1-to-l2-messaging.mdx#address-aliasing)，提供_潜在_ 资金回收路径。 `unsafeCreateRetryableTicket` 将允许创建一个退款地址在L1上是合约的可重试票据； 因为没有 L1 合约地址在 L2上也可能同样是合约，因此退款到 L2 上的这些地址将无法恢复。
+
+（精明的观察者可能会注意到第三种票证创建方法，`createRetryableTicketNoRefundAliasRewrite`；包含它只是为了向后兼容，但应该被视为弃用，取而代之的是`unsafeCreateRetryableTicket`）

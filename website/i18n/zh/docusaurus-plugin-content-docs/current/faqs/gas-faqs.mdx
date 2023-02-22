@@ -1,0 +1,33 @@
+# 常见问题解答：Gas
+
+### Arbitrum 上的gas是如何计算的？ {#q-gas}
+
+Arbitrum 链上的费用在 L2 上以链本身的货币（Arbitrum One 和 Nova 上的 ETH）收取。
+
+交易费用由 L1 和 L2 部分组成：
+
+L1 组件旨在支付 Sequencer 在 L1 上发布交易的成本（并仅此而已）。 （参见 [L1 定价](/arbos/l1-pricing.mdx)。）
+
+L2 部分包括运行 L2 链的成本； 它使用 Geth 进行gas计算，因此其行为与 L1 以太坊几乎相同。 一个区别是，与以太坊不同，Arbitrum 链强制执行gas price下限，目前 Arbitrum One 为 0.1 gwei，Nova 为 0.01 gwei（参见 [Gas](/arbos/gas.mdx)）。
+
+L2 Gas 价格会根据类似 EIP 1559 的模型根据拥塞情况做出相应调整。
+
+### 为什么看起来两个相同的交易消耗了不同数量的气体？ {#q-gas-changes}
+
+调用 Arbitrum 节点的 `eth_estimateGas` RPC 返回的值足以覆盖当前 gas 费用中 L1 和 L2 的部分； 这返回值是将出现在用户钱包中“gas limit”字段中的值。
+
+因此，如果 L1 调用数据价格随时间发生变化，（例如，在钱包中）交易的 gas 限额就会发生变化。 事实上，L2 的 gas 限制并没有改变，只是改变了支付交易的 L1 + L2 费用所需的总 gas。
+
+有关更多信息，请参阅[二维费用](https://medium.com/offchainlabs/understanding-arbitrum-2-dimensional-fees-fd1d582596c9)。
+
+### Arbitrum 交易的 Gas 费用的 L1 部分是如何计算的？ {#q-gas-l1}
+
+一笔交易需要支付的 L1 费用是通过用 brotli 压缩其数据并将结果的大小（以字节为单位）乘以 ArbOS 当前的调用数据价格来确定的； 后者的值可以通过 ArbGasInfo 预编译合约的 `getPricesInWei` 方法查询。
+
+### Arbitrum 有内存池吗？ {#q-mempool}
+
+Arbitrum Sequencer 按照先到先得的原则对交易进行排序； Sequencer 根据接收到的顺序将交易加入队列并相应地执行它们。 因此，这个队列代替内存池存在。 Sequencer的队列没有空间限制； 队列上的事务如果没有及时执行，最终会超时并被丢弃。 在正常情况下，队列是空的，因为交易几乎是即时执行的。
+
+### 我需要为我的 Arbitrum 交易支付优先费吗？ {#q-priority}
+
+由于交易是按照排序器收到的顺序处理的，因此 Arbitrum 交易不需要优先费； 如果交易确实包含优先费，它将在执行结束时退还到交易的原始地址。

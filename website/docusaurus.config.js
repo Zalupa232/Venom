@@ -27,7 +27,18 @@ const config = {
   // to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: "en",
-    locales: ["en"],
+    locales: ["en","zh"],
+    localeConfigs: {
+      en: {
+        label: 'English',
+        direction: 'ltr',
+        htmlLang: 'en-US',
+        calendar: 'gregory',
+      },
+      // zh: {
+      //   path: '../arbitrum-docs/zh',
+      // },
+    }
   },
 
   presets: [
@@ -36,7 +47,7 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          path: "../arbitrum-docs/",
+          path: "../arbitrum-docs",
           sidebarPath: require.resolve("./sidebars.js"),
           routeBasePath: "/",
           editUrl: function (s) {
@@ -81,6 +92,10 @@ const config = {
           src: "img/logo.svg",
         },
         items: [
+          {
+            type: 'localeDropdown',
+            position: 'right',
+          },
           {
             type: "doc",
             docId: "intro/intro",

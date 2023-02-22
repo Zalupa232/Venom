@@ -1,0 +1,11 @@
+# 常见问题解答：节点运行
+
+### 如何在本地运行 nitro 节点进行开发？ {#q-node-local}
+
+请参阅 [此处](/node-running/local-dev-node.mdx) 的说明。
+
+我们推荐通过 docker 运行 nitro 节点； 如要直接编译/不使用 docker 运行，您可以按照此文件中的步骤直接运行可执行文件。
+
+### 我可以在 p2p 模式下运行 Arbitrum 节点吗？ {#q-节点-p2p}
+
+Arbitrum 没有共识机制，所以“p2p 模式”不适用。 对于要同步到最新链状态的节点，它们连接到 L1 节点以同步已于 calldata 形式发布在l1中链的历史记录，并连接到 Sequencer feed以获取尚未成批发布到l1的交易。 在任何情况下，节点都不需要相互p2p同步。

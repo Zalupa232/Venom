@@ -1,0 +1,13 @@
+# 常见问题杂项
+
+### block.timestamp 和 block.number 如何在 Arbitrum 上工作？ {#q-blocknum}
+
+Solidity 对 Arbitrum 上的 `block.number` 和 `block.timestamp` 的调用将稍微延迟地返回底层 L1 的块号/时间戳； 即，每隔几分钟更新一次。 请注意，L2 块编号（即，在块浏览器中看到的/由 RPC 返回的）是不同的，并且通常大约每秒更新一次。
+
+有关详细信息，请参阅[区块编号和时间](/time.mdx)。
+
+### Arbitrum One的去中心化现状如何？ {#q-dentralization}
+
+Arbitrum One 在 Arbitrum Rollup 协议的[完整、功能完整的实现](https://github.com/OffchainLabs/nitro) 上运行； 然而，鉴于这仍然是一项相当新的技术，我们目前维持管理“训练轮”。 该系统的集中式组件将随着时间的推移逐步淘汰。
+
+有关状态更新，请参阅 [“Mainnet Beta”](/mainnet-beta.mdx)，或在 [L2BEAT](https://l2beat.com/scaling/risk/) 查看我们朋友的工作。
